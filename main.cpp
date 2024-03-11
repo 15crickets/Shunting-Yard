@@ -6,10 +6,13 @@ using namespace std;
 void push(Node* &stackHead, Node* newNode, Node* tempNode);
 void pop(Node* &stackHead, Node* current, Node* prev);
 char peek(Node* stackHead, Node* current, Node* prev);
+void enqueue(Node* &queueHead, Node* newNode);
+//void dequeue();
+
 
 int main(){
-  char input [50];
-  cin.get(input, 50);
+  //char input [50];
+  //cin.get(input, 50);
   Node* stackHead = NULL;
   Node* queueHead = NULL;
 
@@ -25,13 +28,41 @@ int main(){
   tempNode3->setInformation('3');
 
   cout << "We're so back" << endl;
-  Node* tempNode = new Node();
-  push(stackHead, tempNode1, tempNode);
+  push(stackHead, tempNode1, stackHead);
   
-  push(stackHead, tempNode2, tempNode);
-  cout << peek(stackHead, stackHead, stackHead) << endl;
+  push(stackHead, tempNode2, stackHead);
+  pop(stackHead, stackHead, stackHead);
+
+  pop(stackHead, stackHead, stackHead);
+
+  enqueue(queueHead, tempNode1);
+  cout << queueHead->getInformation() << "A" << endl;
+
+  cout << tempNode2->getInformation() << endl;
+  enqueue(queueHead, tempNode2);
+
+  
+  cout << queueHead->getInformation() << "B" << endl;
+  cout << queueHead->getNext()->getInformation() << "C" << endl;
+
+  
 
 }
+
+void enqueue(Node* &queueHead, Node* newNode){
+  cout << "NEWINFORMATION: " << newNode->getInformation() << endl;
+  if(queueHead == NULL){
+    queueHead = newNode;
+  }
+  else{
+    Node* tempNode = queueHead;
+    queueHead = newNode;
+    queueHead->setNext(tempNode);
+  }
+
+}
+
+
 
 void pop(Node* &stackHead, Node* current, Node* prev){
   if(stackHead == NULL){
@@ -50,7 +81,7 @@ void pop(Node* &stackHead, Node* current, Node* prev){
 
 void push(Node* &stackHead, Node* newNode, Node* tempNode){
   cout << newNode->getInformation() << endl;
-  cout << "YOWAZGOODBAZBALLERS" << endl;
+  cout << "Tests" << endl;
   if(stackHead == NULL){
     stackHead = newNode;
   }
@@ -78,7 +109,7 @@ char peek(Node* stackHead, Node* current, Node* prev){
       return current->getInformation();
     }
     else{
-      peek(stackHead, current->getNext(), current);
+      return peek(stackHead, current->getNext(), current);
     }
   }
   return 'b';
