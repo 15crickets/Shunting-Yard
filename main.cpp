@@ -6,19 +6,20 @@ using namespace std;
 void push(Node* &stackHead, Node* newNode, Node* tempNode);
 void pop(Node* &stackHead, Node* current, Node* prev);
 char peek(Node* stackHead, Node* current, Node* prev);
-void enqueue(Node* &queueHead, Node* newNode);
+void enqueue(Node* &queueHead, Node* newNode, Node* tempNode);
+bool precedence(char one, char two);
+void printQueue(Node* current);
 //void dequeue();
 
 
 int main(){
-  //char input [50];
-  //cin.get(input, 50);
+  char input [50];
+  cin.get(input, 50);
+  cin.get();
   Node* stackHead = NULL;
   Node* queueHead = NULL;
 
-  //tests
-
-  cout << "HI" << endl;
+  /*
   Node* tempNode1 = new Node();
   Node* tempNode2 = new Node();
   Node* tempNode3 = new Node();
@@ -29,35 +30,141 @@ int main(){
 
   cout << "We're so back" << endl;
   push(stackHead, tempNode1, stackHead);
-  
+  pop(stackHead, stackHead, stackHead);
+  cout << peek(stackHead, stackHead, stackHead) << endl;
+
+
+
   push(stackHead, tempNode2, stackHead);
+  push(stackHead, tempNode3, stackHead);
   pop(stackHead, stackHead, stackHead);
+  cout << peek(stackHead, stackHead, stackHead) << endl;
 
   pop(stackHead, stackHead, stackHead);
+  cout << peek(stackHead, stackHead, stackHead) << endl;
+ */ 
+  
+  
+  for(int i = 0; i < strlen(input); i++){
+    if((int) input[i] < 58 && (int) input[i] > 47){
+      Node* tempNode = new Node();
+      tempNode->setInformation(input[i]);
+      cout << input[i] << endl;
+      cout << "ENQUEUE1" << tempNode->getInformation() << endl;
+      enqueue(queueHead, tempNode, queueHead);
+    }
+    else if(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/'|| input[i] == '^' ){
+      cout << "WE GETTING IN HERE? " << endl;
+      Node* tempNode = new Node();
+      tempNode->setInformation(input[i]);
+      if(peek(stackHead, stackHead, stackHead) != 'a'){
+        cout << "HERE? " << endl;
+        while(precedence(input[i], peek(stackHead, stackHead, stackHead)) == false && peek(stackHead, stackHead, stackHead) != 'a'){
+          Node* temp = new Node();
+          temp->setInformation(peek(stackHead, stackHead, stackHead));
+          cout << "ENQUEUE2" << temp->getInformation() << endl;
+          enqueue(queueHead, temp, queueHead);
+          cout << stackHead->getInformation() << endl;
+          pop(stackHead, stackHead, stackHead);
+          
+          //cout << peek(stackHead, stackHead, stackHead) << endl;
+          cout << "Reached end" << endl;
+        }
+        
+      }
+      cout << "WE RUNNING THIS?" << endl;
+      push(stackHead, tempNode, stackHead);
 
-  enqueue(queueHead, tempNode1);
-  cout << queueHead->getInformation() << "A" << endl;
+    }
+    
+  }
+  cout << "HI" << endl;
+  while(peek(stackHead, stackHead, stackHead) != 'a'){
+    cout << "WHOOPEDY DOO" << endl;
+    Node* temporary = new Node();
+    temporary->setInformation(peek(stackHead, stackHead, stackHead));
+    cout << peek(stackHead, stackHead, stackHead) << endl;
+    pop(stackHead, stackHead, stackHead);
+    cout << "ENQUEUE3" << temporary->getInformation() << endl;
+    enqueue(queueHead, temporary, queueHead);
+  }
 
-  cout << tempNode2->getInformation() << endl;
-  enqueue(queueHead, tempNode2);
+  printQueue(queueHead);
 
   
-  cout << queueHead->getInformation() << "B" << endl;
-  cout << queueHead->getNext()->getInformation() << "C" << endl;
+  
 
   
 
 }
+void printQueue(Node* current){
+  while(current != NULL){
+    cout << "RUNTHROUGH" << endl;
+    cout << current->getInformation() << " " << endl;
+    current = current->getNext();
+  }
+}
 
-void enqueue(Node* &queueHead, Node* newNode){
-  cout << "NEWINFORMATION: " << newNode->getInformation() << endl;
+bool precedence(char one, char two){
+  cout << "YO WASSUP GOOD GAMERS" << endl;
+  int firstPrec = 0;
+  int firstAssoc = -2;
+  int secAssoc = -2;
+  int secPrec = 0;
+  if( one == '+' ||  one == '-'){
+    firstPrec = 2;
+    firstAssoc = -1;
+  }
+  else if(one == '*' || one == '/'){
+    firstPrec = 3;
+    firstAssoc = -1;
+  }
+  else if(one == '^'){
+    secPrec = 4;
+    secAssoc = 1;
+  }
+  if(two == '+' ||  two == '-'){
+    secPrec = 2;
+    secAssoc = -1;
+  }
+  else if(two == '*' || two == '/'){
+    secPrec = 3;
+    secAssoc = -1;
+  }
+  else if(two == '^'){
+    secPrec = 4;
+    secAssoc = 1;
+  }
+
+  if(secPrec > firstPrec || (secPrec == firstPrec && secAssoc == -1)){
+    return false;
+  }
+  else{
+    return true;
+  }
+
+  
+
+
+}
+
+void enqueue(Node* &queueHead, Node* newNode, Node* tempNode){
+  //cout << "NEWINFORMATION: " << newNode->getInformation() << endl;
   if(queueHead == NULL){
     queueHead = newNode;
   }
+  else if(tempNode->getNext() == NULL){
+    //cout << "version2" << endl;
+    //cout << newNode->getInformation() << endl;
+    tempNode->setNext(newNode);
+
+  }
   else{
-    Node* tempNode = queueHead;
-    queueHead = newNode;
-    queueHead->setNext(tempNode);
+    //cout << "RECURSION TIME" << endl;
+    tempNode = tempNode->getNext();
+    push(queueHead, newNode, tempNode);
+
+
   }
 
 }
@@ -68,9 +175,10 @@ void pop(Node* &stackHead, Node* current, Node* prev){
   if(stackHead == NULL){
     return;
   }
-
-  if(current->getNext() == NULL){
-    delete current;
+  else if(stackHead->getNext() == NULL){
+    stackHead = NULL;
+  }
+  else if(current->getNext() == NULL){
     prev->setNext(NULL);
   }
   else{
@@ -80,19 +188,19 @@ void pop(Node* &stackHead, Node* current, Node* prev){
 }
 
 void push(Node* &stackHead, Node* newNode, Node* tempNode){
-  cout << newNode->getInformation() << endl;
-  cout << "Tests" << endl;
+  //cout << newNode->getInformation() << endl;
+  //cout << "Tests" << endl;
   if(stackHead == NULL){
     stackHead = newNode;
   }
   else if(tempNode->getNext() == NULL){
-    cout << "version2" << endl;
-    cout << newNode->getInformation() << endl;
+    //cout << "version2" << endl;
+    //cout << newNode->getInformation() << endl;
     tempNode->setNext(newNode);
 
   }
   else{
-    cout << "RECURSION TIME" << endl;
+    //cout << "RECURSION TIME" << endl;
     tempNode = tempNode->getNext();
     push(stackHead, newNode, tempNode);
 
