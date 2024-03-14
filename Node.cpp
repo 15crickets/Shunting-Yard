@@ -12,12 +12,30 @@ Node :: ~Node(){
   next = NULL;
 }
 
+void Node :: setRight(Node* newRight){
+  right = newRight;
+
+}
+
+void Node :: setLeft(Node* newLeft){
+  left = newLeft;
+
+}
+
 void Node :: setNext(Node* newnext){
   next = newnext;
 }
 
 Node* Node:: getNext(){
   return next;
+}
+
+Node* Node :: getRight(){
+  return right;
+}
+
+Node* Node :: getLeft(){
+  return left;
 }
 
 void Node :: setInformation(char value){

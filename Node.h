@@ -11,8 +11,14 @@ class Node{
   Node();
   ~Node();
   Node* next;
+  Node* left;
+  Node* right;
   char data;
 
+  void setRight(Node* newRight);
+  void setLeft(Node* newLeft);
+  Node* getRight();
+  Node* getLeft();
   void setNext(Node* newnext);
   Node* getNext();
   void setInformation(char value);

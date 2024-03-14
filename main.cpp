@@ -6,10 +6,11 @@ using namespace std;
 void push(Node* &stackHead, Node* newNode, Node* tempNode);
 void pop(Node* &stackHead, Node* current, Node* prev);
 char peek(Node* stackHead, Node* current, Node* prev);
+Node* peekNew(Node* stackHead, Node* current, Node* prev);
 void enqueue(Node* &queueHead, Node* newNode, Node* tempNode);
 bool precedence(char one, char two);
 void printQueue(Node* current);
-//void dequeue();
+Node* dequeue(Node* &queueHead);
 
 
 int main(){
@@ -51,8 +52,10 @@ int main(){
       tempNode->setInformation(input[i]);
       cout << input[i] << endl;
       cout << "ENQUEUE1" << tempNode->getInformation() << endl;
+      cout << "I: " << i << endl;
       enqueue(queueHead, tempNode, queueHead);
     }
+    
     else if(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/'|| input[i] == '^' ){
       cout << "WE GETTING IN HERE? " << endl;
       Node* tempNode = new Node();
@@ -60,6 +63,7 @@ int main(){
       if(peek(stackHead, stackHead, stackHead) != 'a'){
         cout << "HERE? " << endl;
         while(precedence(input[i], peek(stackHead, stackHead, stackHead)) == false && peek(stackHead, stackHead, stackHead) != 'a'){
+	  cout << "INPUT: " << input[i] << endl;
           Node* temp = new Node();
           temp->setInformation(peek(stackHead, stackHead, stackHead));
           cout << "ENQUEUE2" << temp->getInformation() << endl;
@@ -74,6 +78,21 @@ int main(){
       }
       cout << "WE RUNNING THIS?" << endl;
       push(stackHead, tempNode, stackHead);
+
+    }
+    else if (input[i] == '('){
+      Node* tempNode = new Node();
+      tempNode->setInformation(input[i]);
+      push(stackHead, tempNode, stackHead);
+    }
+    else if(input[i] == ')'){
+      while(peek(stackHead, stackHead, stackHead) != '('){
+	Node* newTemp = new Node();
+	newTemp->setInformation(peek(stackHead, stackHead, stackHead));
+	enqueue(queueHead, newTemp, queueHead);
+	pop(stackHead, stackHead, stackHead);
+      }
+      pop(stackHead, stackHead, stackHead);
 
     }
     
@@ -91,19 +110,58 @@ int main(){
 
   printQueue(queueHead);
 
-  
-  
+  Node* newStackHead = NULL;
 
-  
+  while(queueHead != NULL){
+    cout << "runwhile" << endl;
+    if(isdigit(queueHead->getInformation())){
+      cout << "IN HERE" << endl;
+      push(newStackHead, dequeue(queueHead), newStackHead);
+      
+    }
+    else{
+      cout << "MAKING IT IN " << endl;
+      cout << peek(newStackHead, newStackHead, newStackHead) << endl;
+      if(peek(newStackHead, newStackHead, newStackHead) != 'a'){
+	queueHead->setRight(peekNew(newStackHead, newStackHead, newStackHead));
+	pop(newStackHead, newStackHead, newStackHead);
+	if(peek(newStackHead, newStackHead, newStackHead) != 'a'){
+	  queueHead->setLeft(peekNew(newStackHead, newStackHead, newStackHead));
+	  pop(newStackHead, newStackHead, newStackHead);
+	  
+	}
+      }
+      cout << "VIBING HERE? " << endl;
+      push(newStackHead, dequeue(queueHead), newStackHead);
+    }
 
+  }
+  cout << "FINAL WHAT WE GOT" << endl;
+  cout << newStackHead->getInformation() << endl;
+  cout << newStackHead->getLeft()->getInformation() << endl;
+  cout << newStackHead->getRight()->getInformation() << endl;
+  cout << newStackHead->getLeft()->getRight()->getInformation() << endl;
+  cout << newStackHead->getLeft()->getLeft()->getInformation() << endl;
+  cout << newStackHead->getLeft()->getLeft()->getLeft()->getInformation() << endl;
 }
+
+
+Node* dequeue(Node* &queueHead){
+  Node* tempNode = queueHead;
+  queueHead = queueHead->getNext();
+  tempNode->setNext(NULL);
+  return tempNode;
+}
+
+
 void printQueue(Node* current){
   while(current != NULL){
-    cout << "RUNTHROUGH" << endl;
-    cout << current->getInformation() << " " << endl;
+    cout << current->getInformation() << " ";
     current = current->getNext();
   }
+  cout << endl;
 }
+
 
 bool precedence(char one, char two){
   cout << "YO WASSUP GOOD GAMERS" << endl;
@@ -120,8 +178,8 @@ bool precedence(char one, char two){
     firstAssoc = -1;
   }
   else if(one == '^'){
-    secPrec = 4;
-    secAssoc = 1;
+    firstPrec = 4;
+    firstAssoc = 1;
   }
   if(two == '+' ||  two == '-'){
     secPrec = 2;
@@ -137,6 +195,8 @@ bool precedence(char one, char two){
   }
 
   if(secPrec > firstPrec || (secPrec == firstPrec && secAssoc == -1)){
+    cout << "SECPREC" << two << secPrec << endl;
+    cout << "FIRSTPREC" << one << firstPrec << endl;
     return false;
   }
   else{
@@ -144,8 +204,6 @@ bool precedence(char one, char two){
   }
 
   
-
-
 }
 
 void enqueue(Node* &queueHead, Node* newNode, Node* tempNode){
@@ -224,4 +282,23 @@ char peek(Node* stackHead, Node* current, Node* prev){
 
 }
 
+Node* peekNew(Node* stackHead, Node* current, Node* prev){
+  if(stackHead == NULL){
+    return NULL;
+  }
+  else{
+    if(current->getNext() == NULL){
+      return current;
+    }
+    else{
+
+      return peekNew(stackHead, current->getNext(), current);
+    }
+
+
+  }
+  return NULL;
+
+
+}
 
