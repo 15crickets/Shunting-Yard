@@ -10,11 +10,12 @@ class Node{
  public:
   Node();
   ~Node();
+  //initializing variables
   Node* next;
   Node* left;
   Node* right;
   char data;
-
+  //function prototypes
   void setRight(Node* newRight);
   void setLeft(Node* newLeft);
   Node* getRight();
